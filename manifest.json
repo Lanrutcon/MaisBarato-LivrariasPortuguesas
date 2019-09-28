@@ -1,0 +1,23 @@
+{
+	"manifest_version": 2,
+	"name": "Mais barato! Livrarias portuguesas",
+	"version": "1.0",
+	"description": "Mostra os preços de outras livrarias",
+	"permissions": ["*://*.bertrand.pt/*", "*://*.wook.pt/*", "*://*.almedina.net/*", "*://*.antigona.pt/*", "*://*.portoeditora.pt/*"],
+	"icons": 
+        {
+			"48": "icon.png"
+        },
+	"background":
+		{
+			"scripts": ["background.js"]
+		},
+	"content_scripts": 
+        [
+            {
+				"matches": ["*://*.bertrand.pt/*", "*://*.wook.pt/*", "*://*.almedina.net/*", "*://*.antigona.pt/*", "*://*.portoeditora.pt/*"],
+				"css": ["style.css"],
+				"js": ["main.js"]
+            }
+        ]
+}
