@@ -1,8 +1,12 @@
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.contentScriptQuery == "bertrand.pt") {
         fetch("https://www.bertrand.pt/pesquisa/" + request.bookIsbn)
             .then(response => response.text())
-            .then(text => sendResponse(text))
+            .then(text => {
+                    sendResponse(text)
+                    console.log(text)
+                }
+            )
             .catch(error => sendResponse(error))
         return true;
     } else if (request.contentScriptQuery == "wook.pt") {
@@ -29,5 +33,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
             .then(text => sendResponse(text))
             .catch(error => sendResponse(error))
         return true;
-    }	
+    } else if (request.contentScriptQuery == "fnac.pt") {
+        console.log("fetching fnac.pt");
+        fetch("https://www.fnac.pt/SearchResult/ResultList.aspx?Search=" + request.bookIsbn)
+            .then(response => response.text())
+            .then(text => sendResponse(text))
+            .catch(error => sendResponse(error))
+        return true;
+    }
 });
