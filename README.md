@@ -1,6 +1,15 @@
 # Mais Barato! Livrarias Portuguesas
 Add-on/Extensão para browser que notifica-te duma livraria com um melhor preço
 
+### Download
+[Firefox](https://addons.mozilla.org/pt-PT/firefox/addon/mais-barato-livrarias-pt/)
+
+[Chrome](https://chrome.google.com/webstore/detail/mais-barato-livrarias-por/dpncdpeniakfljhgjmnapankelbcpcfm)
+
+[Opera (usando "Install Chrome Extensions")](https://addons.opera.com/pt/extensions/details/install-chrome-extensions/)
+
+[Brave (a partir da Chrome Web Store)](https://support.brave.com/hc/en-us/articles/360017909112-How-can-I-add-extensions-to-Brave-)
+
 ### Como funciona:
 Ao entrar dentro da página principal do livro (e.g. https://www.bertrand.pt/livro/1984-george-orwell/192908), a extensão procura por outras livrarias que tenham o mesmo livro.
 Caso a extensão encontre uma que tenha um preço inferior, então é lançada uma notificação:
