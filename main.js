@@ -1,5 +1,5 @@
 var currentSite = window.location.hostname.replace("www.", "");
-var sites = ["bertrand.pt", "wook.pt", "almedina.net", "antigona.pt", "portoeditora.pt"];
+var sites = ["bertrand.pt", "wook.pt", "almedina.net", "antigona.pt", "portoeditora.pt", "bookdepository.com"];
 
 var sitesPrice = {
     "bertrand.pt": {
@@ -21,7 +21,11 @@ var sitesPrice = {
     "portoeditora.pt": {
         "retrievePrice": getPricePortoEditora,
         "getPrice": currentSite == sites[4] ? document.querySelectorAll(".product-price-sale")[0].innerText.replace("€", "").replace(",", ".") : ""
-    }
+    },
+	"bookdepository.com": {
+		"retrievePrice": getPriceBookDepository,
+        "getPrice": currentSite == sites[5] ? document.querySelectorAll(".sale-price")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
+	}
 };
 
 var priceTooltip;
@@ -257,6 +261,12 @@ function onMouseOut(event) {
     t = setTimeout(function () {
             toggleTooltip(0);
         }, 2000);
+}
+
+
+
+function formatPrice(price) {
+	return Number(price).toLocaleString("pt-PT", {style: "currency", currency: "EUR", minimumFractionDigits: 2});
 }
 
 //StartUp function
