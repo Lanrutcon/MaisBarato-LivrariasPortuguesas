@@ -1,5 +1,8 @@
+//Add BookDepository Tooltip (GetISBNs)
+//Set format Price in all spans prices
+
 var currentSite = window.location.hostname.replace("www.", "");
-var sites = ["bertrand.pt", "wook.pt", "almedina.net", "antigona.pt", "portoeditora.pt", "bookdepository.com"];
+var sites = ["bertrand.pt", "wook.pt", "almedina.net", "antigona.pt", "portoeditora.pt", "fnac.pt", "bookdepository.com"];
 
 var sitesPrice = {
     "bertrand.pt": {
@@ -22,9 +25,13 @@ var sitesPrice = {
         "retrievePrice": getPricePortoEditora,
         "getPrice": currentSite == sites[4] ? document.querySelectorAll(".product-price-sale")[0].innerText.replace("€", "").replace(",", ".") : ""
     },
+	"fnac.pt": {
+        "retrievePrice": getPriceFnac,
+        "getPrice": currentSite == sites[5] ? document.querySelectorAll(".f-priceBox-price--reco")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
+	},
 	"bookdepository.com": {
 		"retrievePrice": getPriceBookDepository,
-        "getPrice": currentSite == sites[5] ? document.querySelectorAll(".sale-price")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
+        "getPrice": currentSite == sites[6] ? document.querySelectorAll(".sale-price")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
 	}
 };
 
@@ -53,9 +60,19 @@ function getBookISBN() {
     else if (currentSite.indexOf(sites[4]) != -1) {
         isbn = document.querySelectorAll('[itemprop="isbn"]')[0].innerText.replace(/-/g, '');
     }
+	//Fnac
+	else if (currentSite.indexOf(sites[5]) != -1) {
+		//$(".Feature-item > span.Feature-label:contains(ISBN)").parent().children()[1].innerText
+		var elemArray = document.querySelectorAll(".Feature-item > span.Feature-label")
+		for (let i = 0; i < elemArray.length; i++) {
+			if (elemArray[i].innerText == "ISBN") {
+				isbn = elemArray[i].parentElement.children[1].innerText;
+				break;
+			}
+		}
+    }
 
     isbn = isbn.replace(/-/g, '');
-
     return isbn;
 }
 
@@ -67,107 +84,13 @@ function retrieveBookInfo(isbn) {
     createTooltip();
 }
 
-function getPriceBertrand(isbn) {
-    chrome.runtime.sendMessage({
-        contentScriptQuery: "bertrand.pt",
-        bookIsbn: isbn
-    },
-        text => {
-        var parser = new DOMParser();
-        var el = parser.parseFromString(text, "text/html");
 
-        bookLinks["bertrand.pt"] = "https://www.bertrand.pt" + el.getElementsByClassName("title-lnk track")[0].href.replace(/^.*\/\/[^\/]+/, '');
-        createSpan("Bertrand.pt: " + el.getElementsByClassName("active-price")[0].innerText, bookLinks["bertrand.pt"]);
-
-        var price = el.getElementsByClassName("active-price")[0].innerText;
-        price = price.replace("€", "").replace(",", ".");
-        priceChecker(price, "bertrand.pt");
-    });
-}
-
-function getPriceWook(isbn) {
-    chrome.runtime.sendMessage({
-        contentScriptQuery: "wook.pt",
-        bookIsbn: isbn
-    },
-        text => {
-        var parser = new DOMParser();
-        var el = parser.parseFromString(text, "text/html");
-
-        bookLinks["wook.pt"] = el.querySelectorAll("meta[property='og:url']")[0].content;
-        createSpan("Wook.pt: " + el.getElementById("productPageRightSectionTop-saleAction-price-current").getAttribute("data-price"), bookLinks["wook.pt"]);
-
-        var price = el.getElementById("productPageRightSectionTop-saleAction-price-current").getAttribute("data-price");
-        price = price.replace("€", "").replace(",", ".");
-        priceChecker(price, "wook.pt");
-    });
-}
-
-function getPriceAlmedina(isbn) {
-    chrome.runtime.sendMessage({
-        contentScriptQuery: "almedina.net",
-        bookIsbn: isbn
-    },
-        text => {
-        var parser = new DOMParser();
-        var el = parser.parseFromString(text, "text/html");
-
-        bookLinks["almedina.net"] = el.querySelectorAll("meta[property='og:url']")[0].content;
-        //format price
-        var price = el.querySelectorAll(".prod-sale-section")[0].querySelectorAll(".price")[0].innerText;
-        price = price.replace(" ", "");
-
-        createSpan("Almedina.net: " + el.querySelectorAll(".prod-sale-section")[0].querySelectorAll(".price")[0].innerText, bookLinks["almedina.net"]);
-
-        price = price.replace("€", "").replace(",", ".").trim();
-        priceChecker(price, "almedina.net");
-    });
-}
-
-function getPriceAntigona(isbn) {
-    isbn = isbn.replace(/(.{3})/g, "$1-");
-    chrome.runtime.sendMessage({
-        contentScriptQuery: "antigona.pt",
-        bookIsbn: isbn
-    },
-        text => {
-        var parser = new DOMParser();
-        var el = parser.parseFromString(text, "text/html");
-
-        bookLinks["antigona.pt"] = "https://www.antigona.pt" + el.getElementsByClassName("product-grid-item")[0].href.replace(/^.*\/\/[^\/]+/, '');
-        //format price
-        var price = el.getElementsByClassName("visually-hidden")[1].innerText;
-        price = price.replace("€", "").replace(".", ",") + "€";
-
-        createSpan("Antigona.pt: " + price, bookLinks["antigona.pt"]);
-
-        price = price.replace("€", "").replace(",", ".");
-        priceChecker(price, "antigona.pt");
-    });
-}
-
-function getPricePortoEditora(isbn) {
-    chrome.runtime.sendMessage({
-        contentScriptQuery: "portoeditora.pt",
-        bookIsbn: isbn
-    },
-        text => {
-        var parser = new DOMParser();
-        var el = parser.parseFromString(text, "text/html");
-
-        bookLinks["portoEditora.pt"] = "https://www.portoeditora.pt" + el.querySelectorAll(".product-title > a")[0].href.replace(/^.*\/\/[^\/]+/, '');
-        createSpan("PortoEditora.pt: " + el.getElementsByClassName("pvp-price")[0].innerText, bookLinks["portoEditora.pt"]);
-
-        var price = el.getElementsByClassName("pvp-price")[0].innerText;
-        priceChecker(price, "portoEditora.pt");
-    });
-}
 
 function priceChecker(realPrice, site) {
-    var price = realPrice.replace("€", "").replace(",", ".");
+    var price = Number(realPrice.replace("€", "").replace(",", "."));
     sitesPrice[site]["price"] = price;
-    if (price < sitesPrice[currentSite]["getPrice"])
-        createToast();
+    if (price < Number(sitesPrice[currentSite]["getPrice"]))
+		createToast();
 }
 
 function createSpan(text, link) {
@@ -183,6 +106,8 @@ function createTooltip() {
     priceTooltip.classList.add("pricesTooltip");
     priceTooltip.innerHTML = "<h5>Outras livrarias</h5>";
     priceTooltip.style.display = "none";
+	
+	debugger;
 
     var elem;
     //Bertrand & Wook
@@ -200,6 +125,10 @@ function createTooltip() {
     //Porto Editora
     else if (currentSite.indexOf(sites[4]) != -1) {
         elem = document.getElementsByClassName("product-price-sale")[0];
+    }
+	//Fnac
+    else if (currentSite.indexOf(sites[5]) != -1) {
+        elem = document.getElementsByClassName("f-productOffer-priceBox")[0];
     }
 
     elem.onmouseenter = onMouseEnter;

@@ -29,8 +29,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
             .then(text => sendResponse(text))
             .catch(error => sendResponse(error))
         return true;
+	} else if (request.contentScriptQuery == "fnac.pt") {
+        fetch("https://www.fnac.pt/SearchResult/ResultList.aspx?Search=" + request.bookIsbn)
+            .then(response => response.text())
+            .then(text => sendResponse(text))
+            .catch(error => sendResponse(error))
+        return true;
     } else if (request.contentScriptQuery == "bookdepository.com") {
-		debugger;
         fetch("https://www.bookdepository.com/search?searchTerm=" + request.bookIsbn)
             .then(response => response.text())
             .then(text => sendResponse(text))

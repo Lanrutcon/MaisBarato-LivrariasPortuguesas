@@ -6,7 +6,7 @@ function getPriceBookDepository(isbn) {
         text => {
         var parser = new DOMParser();
         var el = parser.parseFromString(text, "text/html");
-		debugger;
+
         bookLinks["bookdepository.com"] = el.querySelectorAll("link[rel='canonical']")[0].getAttribute("href");
         createSpan("BookDepository.com: " + formatPrice(el.querySelectorAll("a[data-isbn='" + isbn + "']")[0].getAttribute("data-price")), bookLinks["bookdepository.com"]);
 
