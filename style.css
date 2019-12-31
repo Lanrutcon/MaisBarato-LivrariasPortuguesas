@@ -6,7 +6,7 @@
 	font-size: 14px;
 	opacity: 0;
 	transition: opacity 0.5s ease;
-	width: 200px;
+	width: auto;
 	border: 2px solid;
     position: fixed;
 	z-index: 99999;
@@ -76,4 +76,16 @@
 @keyframes fadeout {
   from {bottom: 30px; opacity: 1;}
   to {bottom: 0; opacity: 0;}
+}
+
+.blackWhite {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}
+
+.pinImg {
+	width: 26px;
+	position: absolute;
+	top: 2px;
+	right: 2px;
 }

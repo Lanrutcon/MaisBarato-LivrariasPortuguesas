@@ -1,8 +1,6 @@
-//Add BookDepository Tooltip (GetISBNs)
-//Set format Price in all spans prices
-
 var currentSite = window.location.hostname.replace("www.", "");
-var sites = ["bertrand.pt", "wook.pt", "almedina.net", "antigona.pt", "portoeditora.pt", "fnac.pt", "bookdepository.com"];
+var sites = ["bertrand.pt", "wook.pt", "almedina.net", "antigona.pt", "portoeditora.pt", "fnac.pt", "leyaonline.com", "bookdepository.com"];
+var isPinned = false;
 
 var sitesPrice = {
     "bertrand.pt": {
@@ -29,9 +27,13 @@ var sitesPrice = {
         "retrievePrice": getPriceFnac,
         "getPrice": currentSite == sites[5] ? document.querySelectorAll(".f-priceBox-price--reco")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
 	},
+	"leyaonline.com": {
+        //"retrievePrice": NOT IMPLEMENTED DUE TO SITE AJAX CALLS
+        "getPrice": currentSite == sites[6] ? document.querySelectorAll(".bookPrice > .wrapperTalble > .price")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
+	},
 	"bookdepository.com": {
 		"retrievePrice": getPriceBookDepository,
-        "getPrice": currentSite == sites[6] ? document.querySelectorAll(".sale-price")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
+        "getPrice": currentSite == sites[7] ? document.querySelectorAll(".sale-price")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
 	}
 };
 
@@ -71,6 +73,14 @@ function getBookISBN() {
 			}
 		}
     }
+	//Leya
+    else if (currentSite.indexOf(sites[6]) != -1) {
+        isbn = document.querySelectorAll("span[itemprop='identifier']")[0].innerText.replace(/-/g, '');
+    }
+	//BookDepository
+    else if (currentSite.indexOf(sites[7]) != -1) {
+        isbn = document.querySelectorAll("span[itemprop='isbn']")[0].innerText.replace(/-/g, '');
+    }
 
     isbn = isbn.replace(/-/g, '');
     return isbn;
@@ -78,7 +88,8 @@ function getBookISBN() {
 
 function retrieveBookInfo(isbn) {
     for (let i = 0; i < sites.length; i++) {
-        sitesPrice[sites[i]]["retrievePrice"](isbn);
+		if(sitesPrice[sites[i]]["retrievePrice"])
+			sitesPrice[sites[i]]["retrievePrice"](isbn);
     }
 
     createTooltip();
@@ -91,6 +102,10 @@ function priceChecker(realPrice, site) {
     sitesPrice[site]["price"] = price;
     if (price < Number(sitesPrice[currentSite]["getPrice"]))
 		createToast();
+	
+	if (isPinned && priceTooltip.style.display == "none") {
+		toggleTooltip(1)
+	}
 }
 
 function createSpan(text, link) {
@@ -107,7 +122,23 @@ function createTooltip() {
     priceTooltip.innerHTML = "<h5>Outras livrarias</h5>";
     priceTooltip.style.display = "none";
 	
-	debugger;
+	var pinImg = document.createElement("img");
+	pinImg.classList.add("pinImg");
+	pinImg.src = browser.runtime.getURL("pin.svg");
+	priceTooltip.appendChild(pinImg);
+	
+	
+	pinImg.onclick = function() {
+		pinImg.classList.toggle("blackWhite");
+		isPinned = !isPinned;
+		
+		var storeValue = { "isPinned": isPinned };
+		browser.storage.local.set(storeValue);
+		
+		clearTimeout(t);
+	}
+	
+	priceTooltip.pin = pinImg;
 
     var elem;
     //Bertrand & Wook
@@ -129,6 +160,14 @@ function createTooltip() {
 	//Fnac
     else if (currentSite.indexOf(sites[5]) != -1) {
         elem = document.getElementsByClassName("f-productOffer-priceBox")[0];
+    }
+	//Leya
+    else if (currentSite.indexOf(sites[6]) != -1) {
+        elem = document.querySelectorAll(".bookPrice > .wrapperTalble > .price")[0];
+    }
+	//BookDepository
+    else if (currentSite.indexOf(sites[7]) != -1) {
+        elem = document.querySelectorAll(".sale-price")[0];
     }
 
     elem.onmouseenter = onMouseEnter;
@@ -160,7 +199,7 @@ var t;
 //Events
 function toggleTooltip(show) {
     priceTooltip.style.opacity = show;
-    if (show == 0) {
+    if (show == 0 && !isPinned) {
         clearTimeout(t);
         t = setTimeout(function () {
                 priceTooltip.style.display = "none";
@@ -171,7 +210,7 @@ function toggleTooltip(show) {
 }
 
 function onMouseOver() {
-    if (priceTooltip.style.display == "none")
+    if (priceTooltip.style.display == "none" || isPinned)
         return;
     toggleTooltip(1);
     clearTimeout(t);
@@ -182,18 +221,27 @@ function onMouseOver() {
 
 function onMouseEnter(event) {
     clearTimeout(t);
-    toggleTooltip(1, event.clientX, event.clientY);
+    toggleTooltip(1);
 }
 
 function onMouseOut(event) {
+	if(isPinned)
+		return;
     clearTimeout(t);
     t = setTimeout(function () {
             toggleTooltip(0);
         }, 2000);
 }
 
+//Local cache
+browser.storage.local.get("isPinned", function(result){
+	isPinned = result.isPinned;
+	if(isPinned)
+		priceTooltip.pin.classList.add("blackWhite");
+});
 
 
+//Misc functions
 function formatPrice(price) {
 	return Number(price).toLocaleString("pt-PT", {style: "currency", currency: "EUR", minimumFractionDigits: 2});
 }
