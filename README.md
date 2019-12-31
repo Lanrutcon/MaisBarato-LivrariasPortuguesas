@@ -29,6 +29,9 @@ A extensão irá procurar nas seguintes livrarias portuguesas:
 * [Antígona](https://antigona.pt/)
 * [Almedina](https://www.almedina.net/)
 * [Porto Editora](https://www.portoeditora.pt/)
+* [Fnac](https://www.fnac.pt/)
+* [BookDepository](https://www.bookdepository.com/)
+* [Leya](https://www.leyaonline.com/pt/)
 
 
 #### Obrigado e boas leituras :)
