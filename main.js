@@ -1,3 +1,5 @@
+var browser = browser || chrome;
+
 var currentSite = window.location.hostname.replace("www.", "");
 var sites = ["bertrand.pt", "wook.pt", "almedina.net", "antigona.pt", "portoeditora.pt", "fnac.pt", "leyaonline.com", "bookdepository.com"];
 var isPinned = false;
