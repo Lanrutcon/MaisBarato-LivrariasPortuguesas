@@ -30,7 +30,7 @@ var sitesPrice = {
         "getPrice": currentSite == sites[5] ? document.querySelectorAll(".f-priceBox-price--reco")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
 	},
 	"leyaonline.com": {
-        //"retrievePrice": NOT IMPLEMENTED DUE TO SITE AJAX CALLS
+        "retrievePrice": getPriceLeya,
         "getPrice": currentSite == sites[6] ? document.querySelectorAll(".bookPrice > .wrapperTalble > .price")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
 	},
 	"bookdepository.com": {
@@ -193,6 +193,7 @@ function createToast() {
         setTimeout(function () {
             toast.className = toast.className.replace("show", "");
         }, 8000);
+
     }
 }
 
@@ -248,5 +249,8 @@ function formatPrice(price) {
 	return Number(price).toLocaleString("pt-PT", {style: "currency", currency: "EUR", minimumFractionDigits: 2});
 }
 
+
 //StartUp function
-retrieveBookInfo(getBookISBN());
+if(sitesPrice[currentSite] != undefined) {
+	retrieveBookInfo(getBookISBN());
+}

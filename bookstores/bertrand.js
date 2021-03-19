@@ -12,6 +12,7 @@ function getPriceBertrand(isbn) {
 
         var price = el.getElementsByClassName("active-price")[0].innerText;
         price = price.replace("€", "").replace(",", ".");
+        
         priceChecker(price, "bertrand.pt");
     });
 }
