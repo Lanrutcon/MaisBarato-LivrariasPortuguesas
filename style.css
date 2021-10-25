@@ -9,7 +9,7 @@
 	width: auto;
 	border: 2px solid;
     position: fixed;
-	z-index: 99999;
+	z-index: 9999999;
 	right: 5px;
 	bottom: 5px;
 }

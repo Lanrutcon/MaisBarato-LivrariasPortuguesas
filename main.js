@@ -45,8 +45,14 @@ var bookLinks = {};
 function getBookISBN() {
     var isbn;
     //Bertrand & Wook
-    if (currentSite.indexOf(sites[0]) != -1 || currentSite.indexOf(sites[1]) != -1)
-        isbn = document.getElementById("productPageSectionDetails-collapseDetalhes-content-isbn").querySelectorAll("span")[0].innerText;
+    if (currentSite.indexOf(sites[0]) != -1 || currentSite.indexOf(sites[1]) != -1) {
+		for (let i = 0; i < document.scripts.length; i++) {
+			if (document.scripts[i].type == "application/ld+json") {
+				isbn = JSON.parse(document.scripts[i].innerText).isbn;
+				break;
+			}
+		}
+	}
     //Almedina
     else if (currentSite.indexOf(sites[2]) != -1) {
         var arr = Array.prototype.slice.call(document.querySelectorAll(".prod-details-wrapper > ul > li"));
@@ -66,11 +72,9 @@ function getBookISBN() {
     }
 	//Fnac
 	else if (currentSite.indexOf(sites[5]) != -1) {
-		//$(".Feature-item > span.Feature-label:contains(ISBN)").parent().children()[1].innerText
-		var elemArray = document.querySelectorAll(".Feature-item > span.Feature-label")
-		for (let i = 0; i < elemArray.length; i++) {
-			if (elemArray[i].innerText == "ISBN") {
-				isbn = elemArray[i].parentElement.children[1].innerText;
+		for (let i = 0; i < document.scripts.length; i++) {
+			if (document.scripts[i].type == "application/ld+json") {
+				isbn = JSON.parse(document.scripts[i].innerText).gtin13;
 				break;
 			}
 		}
