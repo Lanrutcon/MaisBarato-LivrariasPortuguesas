@@ -11,7 +11,7 @@ var sitesPrice = {
     },
     "wook.pt": {
         "retrievePrice": getPriceWook,
-        "getPrice": currentSite == sites[1] ? document.getElementsByClassName("current")[0].getAttribute("data-price").replace("€", "").replace(",", ".") : ""
+        "getPrice": currentSite == sites[1] ? document.querySelector(".price").innerText.replace("€", "").replace(",", ".") : ""
     },
     "almedina.net": {
         "retrievePrice": getPriceAlmedina,
@@ -27,11 +27,11 @@ var sitesPrice = {
     },
 	"fnac.pt": {
         "retrievePrice": getPriceFnac,
-        "getPrice": currentSite == sites[5] ? document.querySelectorAll(".f-priceBox-price--reco")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
+        "getPrice": currentSite == sites[5] ? document.querySelectorAll(".f-faPriceBox__price")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
 	},
 	"leyaonline.com": {
         "retrievePrice": getPriceLeya,
-        "getPrice": currentSite == sites[6] ? document.querySelectorAll(".bookPrice > .wrapperTalble > .price")[0].innerText.replace("€", "").replace(",", ".").trim() : ""
+        "getPrice": currentSite == sites[6] ? document.querySelector(".choose-op-item.book > h2").innerText.replace("€", "").replace(",", ".").trim() : ""
 	},
 	"bookdepository.com": {
 		"retrievePrice": getPriceBookDepository,
@@ -68,7 +68,7 @@ function getBookISBN() {
     }
     //Porto Editora
     else if (currentSite.indexOf(sites[4]) != -1) {
-        isbn = document.querySelectorAll('[itemprop="isbn"]')[0].innerText.replace(/-/g, '');
+        isbn = document.querySelector('meta[property="og:isbn"]').content.replace(/-/g, '');
     }
 	//Fnac
 	else if (currentSite.indexOf(sites[5]) != -1) {
@@ -81,7 +81,7 @@ function getBookISBN() {
     }
 	//Leya
     else if (currentSite.indexOf(sites[6]) != -1) {
-        isbn = document.querySelectorAll("span[itemprop='identifier']")[0].innerText.replace(/-/g, '');
+        isbn = document.querySelector("._sinpose-address > ul > li").innerText.split(" ")[1];
     }
 	//BookDepository
     else if (currentSite.indexOf(sites[7]) != -1) {
@@ -147,9 +147,13 @@ function createTooltip() {
 	priceTooltip.pin = pinImg;
 
     var elem;
-    //Bertrand & Wook
-    if (currentSite.indexOf(sites[0]) != -1 || currentSite.indexOf(sites[1]) != -1) {
+    //Bertrand
+    if (currentSite.indexOf(sites[0]) != -1) {
         elem = document.getElementById("productPageRightSectionTop-saleAction-price-current");
+    }
+	//Wook
+	else if (currentSite.indexOf(sites[1]) != -1) {
+        elem = document.querySelector(".price");
     }
     //Almedina
     else if (currentSite.indexOf(sites[2]) != -1) {
@@ -161,21 +165,21 @@ function createTooltip() {
     }
     //Porto Editora
     else if (currentSite.indexOf(sites[4]) != -1) {
-        elem = document.getElementsByClassName("product-price-sale")[0];
+        elem = document.querySelectorAll(".product-price-sale")[0];
     }
 	//Fnac
     else if (currentSite.indexOf(sites[5]) != -1) {
-        elem = document.getElementsByClassName("f-productOffer-priceBox")[0];
+        elem = document.querySelectorAll(".f-faPriceBox__price")[0];
     }
 	//Leya
     else if (currentSite.indexOf(sites[6]) != -1) {
-        elem = document.querySelectorAll(".bookPrice > .wrapperTalble > .price")[0];
+        elem = document.querySelector(".choose-op-item.book > h2");
     }
 	//BookDepository
     else if (currentSite.indexOf(sites[7]) != -1) {
         elem = document.querySelectorAll(".sale-price")[0];
     }
-
+debugger;
     elem.onmouseenter = onMouseEnter;
     elem.onmouseout = onMouseOut;
     priceTooltip.onmouseover = onMouseOver;

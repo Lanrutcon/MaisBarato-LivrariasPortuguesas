@@ -7,6 +7,9 @@ function getPricePortoEditora(isbn) {
         var parser = new DOMParser();
         var el = parser.parseFromString(text, "text/html");
 
+        if (el.querySelectorAll(".product-title > a")[0] == undefined)
+            return;
+
         bookLinks["portoEditora.pt"] = "https://www.portoeditora.pt" + el.querySelectorAll(".product-title > a")[0].href.replace(/^.*\/\/[^\/]+/, '');
         createSpan("PortoEditora.pt: " + el.getElementsByClassName("pvp-price")[0].innerText, bookLinks["portoEditora.pt"]);
 

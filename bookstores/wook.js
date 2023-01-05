@@ -6,12 +6,12 @@ function getPriceWook(isbn) {
         text => {
         var parser = new DOMParser();
         var el = parser.parseFromString(text, "text/html");
+        
+        var price = JSON.parse(el.getElementsByTagName("script")[1].innerHTML).offers.price;
+        price = price.replace("€", "").replace(",", ".");
 
         bookLinks["wook.pt"] = el.querySelectorAll("meta[property='og:url']")[0].content;
-        createSpan("Wook.pt: " + el.getElementById("productPageRightSectionTop-saleAction-price-current").getAttribute("data-price"), bookLinks["wook.pt"]);
-
-        var price = el.getElementById("productPageRightSectionTop-saleAction-price-current").getAttribute("data-price");
-        price = price.replace("€", "").replace(",", ".");
+        createSpan("Wook.pt: " + price.replace(".", ",") + "€", bookLinks["wook.pt"]);
         priceChecker(price, "wook.pt");
     });
 }

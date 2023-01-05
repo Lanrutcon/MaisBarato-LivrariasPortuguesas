@@ -8,6 +8,9 @@ function getPriceAntigona(isbn) {
         var parser = new DOMParser();
         var el = parser.parseFromString(text, "text/html");
 
+        if (el.getElementsByClassName("product-grid-item")[0] == undefined)
+            return;
+
         bookLinks["antigona.pt"] = "https://www.antigona.pt" + el.getElementsByClassName("product-grid-item")[0].href.replace(/^.*\/\/[^\/]+/, '');
         //format price
         var price = el.getElementsByClassName("visually-hidden")[1].innerText;

@@ -7,6 +7,9 @@ function getPriceAlmedina(isbn) {
         var parser = new DOMParser();
         var el = parser.parseFromString(text, "text/html");
 
+        if(el.querySelectorAll("meta[property='og:url']")[0] == undefined)
+            return;
+
         bookLinks["almedina.net"] = el.querySelectorAll("meta[property='og:url']")[0].content;
         //format price
         var price = el.querySelectorAll(".prod-sale-section")[0].querySelectorAll(".price")[0].innerText;
